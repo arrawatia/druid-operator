@@ -76,3 +76,5 @@ druid-operator$ kubectl get svc | grep tiny
 druid-operator$ kubectl get cm | grep tiny
 druid-operator$ kubectl get sts | grep tiny
 ```
+
+

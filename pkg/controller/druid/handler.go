@@ -483,7 +483,7 @@ func makeCommonConfigMap(m *v1alpha1.Druid, ls map[string]string) (*v1.ConfigMap
 func makeConfigMapForNodeSpec(nodeSpec *v1alpha1.DruidNodeSpec, m *v1alpha1.Druid, lm map[string]string, nodeSpecUniqueStr string) (*v1.ConfigMap, error) {
 
 	data := map[string]string{
-		"runtime.properties": fmt.Sprintf("druid.port=%d\n%s", nodeSpec.DruidPort, nodeSpec.RuntimeProperties),
+		"runtime.properties": fmt.Sprintf("druid.port=%d\n%s\n", nodeSpec.DruidPort, nodeSpec.RuntimeProperties),
 		"jvm.config":         fmt.Sprintf("%s\n%s", firstNonEmptyStr(nodeSpec.JvmOptions, m.Spec.JvmOptions), nodeSpec.ExtraJvmOptions),
 	}
 	log4jconfig := firstNonEmptyStr(nodeSpec.Log4jConfig, m.Spec.Log4jConfig)
