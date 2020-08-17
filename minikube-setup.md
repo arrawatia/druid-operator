@@ -45,6 +45,7 @@ helm upgrade \
 b. Verify that the pods are healthy and check logs.
 ```shell script
 kubectl get pods -n minio
+kubectl -n minio logs -l app=minio
 ```
 c. Access the minio web console at http://minio.tiny.druid (use the apikey and access key from the Helm command in step a )
 If this doesnot work make sure the ingress-dns and ingress controller are setup correctly (step c. in the section on minikube)
@@ -73,6 +74,7 @@ helm upgrade \
 c. Make sure the postgres pods and up and running.
 ```shell script
 kubectl get pods -n tiny-cluster
+kubectl logs -n tiny-cluster druid-metadata-postgresql-0
 ```
 
 ## 4. Install the Druid operator
@@ -105,6 +107,7 @@ d. Check the deployed druid-operator. Make sure the pods are up and running.
 ```shell script
 kubectl describe --namespace tiny-cluster deployment druid-operator
 kubectl get pods -n tiny-cluster
+kubectl -n tiny-cluster logs -l app=druid-operator
 ```
 
 ## 4.Deploy druid cluster
