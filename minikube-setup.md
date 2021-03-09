@@ -30,6 +30,9 @@ sudo killall -HUP mDNSResponder
 a. Install the chart.
 ```shell script
 helm repo add minio https://helm.min.io/
+
+kubectl create ns minio
+
 helm upgrade \
     --install minio minio/minio \
     --namespace minio \
@@ -47,10 +50,10 @@ b. Verify that the pods are healthy and check logs.
 kubectl get pods -n minio
 kubectl -n minio logs -l app=minio
 ```
-c. Access the minio web console at http://minio.tiny.druid (use the apikey and access key from the Helm command in step a )
+c. Access the minio web console at http://minio.tiny.test (use the apikey and access key from the Helm command in step a )
 If this doesnot work make sure the ingress-dns and ingress controller are setup correctly (step c. in the section on minikube)
 
-
+d. Create a bucket named `druidio` from the minio web console.
 
 ## 3. Install Postgres for metadata storage
 
@@ -95,11 +98,9 @@ kubectl create --namespace tiny-cluster -f deploy/crds/druid.apache.org_druids_c
 ```
 c. Deploy the druid-operator
 ```shell script
-make build-docker
+eval $(minikube -p minikube docker-env)
 
-sed -i 's|REPLACE_IMAGE|druidio/druid-operator:0.0.1|g' deploy/operator.yaml
-# On OSX use:
-sed -i "" 's|REPLACE_IMAGE|druidio/druid-operator:0.0.1|g' deploy/operator.yaml
+make build-docker
 
 kubectl apply --namespace tiny-cluster -f deploy/operator.yaml
 ```
@@ -141,7 +142,7 @@ kubectl run turnilo \
     --port=9090 \
     --command -- bash -c "npm install -g turnilo && turnilo --druid http://druid-tiny-cluster-routers:8088"
 
-kubectl expose pods turnilo --namespace tiny-cluster --port=9090
+kubectl expose deployment turnilo --namespace tiny-cluster --port=9090
 
 cat <<EOF | kubectl apply --namespace tiny-cluster -f -
 apiVersion: networking.k8s.io/v1beta1
@@ -160,7 +161,7 @@ spec:
 EOF
 
 ```
-b. Access the UI at http://turnlio.tiny.druid 
+b. Access the UI at http://turnlio.tiny.test
 
 
 ## 6. (Optional) Install Grafana (for creating dashboards)
@@ -182,9 +183,10 @@ helm upgrade \
 ## How to run the operator locally
 ```shell script
 mkdir -p tmp && cd tmp
-RELEASE_VERSION=v0.11.0 curl -LO https://github.com/operator-framework/operator-sdk/releases/download/${RELEASE_VERSION}/operator-sdk-${RELEASE_VERSION}-x86_64-apple-darwin
+export RELEASE_VERSION=v0.11.0;curl -LO https://github.com/operator-framework/operator-sdk/releases/download/${RELEASE_VERSION}/operator-sdk-${RELEASE_VERSION}-x86_64-apple-darwin
 ln -s operator-sdk-v0.11.0-x86_64-apple-darwin operator-sdk
-popd
+chmod +x operator-sdk-v0.11.0-x86_64-apple-darwin
+cd ..
 make build
 tmp/operator-sdk up local
 ```

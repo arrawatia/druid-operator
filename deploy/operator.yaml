@@ -16,7 +16,7 @@ spec:
       containers:
         - name: druid-operator
           # Replace this with the built image name
-          image: druidio/druid-operator:0.0.2
+          image: druidio/druid-operator:0.0.1
           command:
           - druid-operator
           imagePullPolicy: IfNotPresent
